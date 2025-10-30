@@ -10,6 +10,7 @@
   } = $props();
 
   let isDragOver = $state(false);
+  const isDragging = $derived(editorManager.dragState.blockType !== null);
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
@@ -19,8 +20,13 @@
     isDragOver = true;
   };
 
-  const handleDragLeave = () => {
-    isDragOver = false;
+  const handleDragLeave = (e: DragEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    
+    if (!target.contains(relatedTarget)) {
+      isDragOver = false;
+    }
   };
 
   const handleDrop = (e: DragEvent) => {
@@ -38,6 +44,7 @@
 
 <div
   class="drop-zone transition-all duration-200"
+  class:is-dragging={isDragging}
   class:is-drag-over={isDragOver}
   ondragover={handleDragOver}
   ondragleave={handleDragLeave}
@@ -46,7 +53,9 @@
   aria-label="Drop zone"
 >
   {#if isDragOver}
-    <div class="h-2 bg-blue-500 rounded"></div>
+    <div class="h-8 bg-blue-500 rounded opacity-50 border-2 border-blue-600"></div>
+  {:else if isDragging}
+    <div class="h-4 bg-blue-200 rounded opacity-30"></div>
   {:else}
     <div class="h-1 bg-transparent"></div>
   {/if}
@@ -58,8 +67,12 @@
     min-height: 4px;
   }
 
+  .is-dragging {
+    min-height: 16px;
+  }
+
   .is-drag-over {
-    min-height: 8px;
+    min-height: 32px;
   }
 </style>
 

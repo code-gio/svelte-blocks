@@ -62,10 +62,19 @@ class EditorManager {
     open: boolean;
     setOpen: (open: boolean) => void;
   }) => {
-    // Toggle the sidebar (open if closed, close if open)
-    leftSidebar.setOpen(!leftSidebar.open);
-    // Always set mode to "add" when this button is clicked
-    this.leftSidebarMode = "add";
+    // If sidebar is closed: open it and set mode to "add"
+    if (!leftSidebar.open) {
+      leftSidebar.setOpen(true);
+      this.leftSidebarMode = "add";
+    }
+    // If sidebar is open and already in "add" mode: close the sidebar
+    else if (this.leftSidebarMode === "add") {
+      leftSidebar.setOpen(false);
+    }
+    // If sidebar is open but NOT in "add" mode: switch to "add" mode
+    else {
+      this.leftSidebarMode = "add";
+    }
   };
 
   // View mode methods
