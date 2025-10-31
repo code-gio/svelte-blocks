@@ -36,6 +36,16 @@
 
     const blockType = editorManager.dragState.blockType;
     if (blockType) {
+      // Check if we're trying to drop into a leaf block (not allowed)
+      if (parentId !== null) {
+        const parent = editorManager.findElementById(parentId);
+        if (parent && !editorManager.canBlockHaveChildren(parent.type)) {
+          console.warn(`Cannot add children to block type "${parent.type}"`);
+          editorManager.endDrag();
+          return;
+        }
+      }
+      
       editorManager.createElement(blockType, parentId, index);
       editorManager.endDrag();
     }

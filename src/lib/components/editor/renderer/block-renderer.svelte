@@ -4,11 +4,11 @@
 
 	let { element }: { element: BuilderElement } = $props();
 
-	const component = $derived(getBlockComponent(element.type));
+	const Component = $derived(getBlockComponent(element.type));
 </script>
 
-{#if component}
-	<svelte:component this={component} {element} />
+{#if Component}
+	<Component {element} />
 {:else}
 	<div class="border border-red-400 bg-red-100 p-4 text-red-700">
 		Unknown block type: {element.type}
