@@ -28,10 +28,16 @@ export interface FieldConfig {
 	defaultValue?: unknown;
 }
 
+export interface FieldGroup {
+	label: string;
+	fields: FieldConfig[];
+	defaultOpen?: boolean;
+}
+
 export interface BlockFieldConfig {
-	content?: FieldConfig[];
-	design?: FieldConfig[];
-	advanced?: FieldConfig[];
+	content?: (FieldConfig | FieldGroup)[];
+	design?: (FieldConfig | FieldGroup)[];
+	advanced?: (FieldConfig | FieldGroup)[];
 }
 
 /**
@@ -298,19 +304,202 @@ export const getBlockFieldConfig = (blockType: string): BlockFieldConfig => {
 		section: {
 			design: [
 				{
-					key: 'design.spacing.padding.breakpoint_base.all.value',
-					label: 'Padding',
-					type: 'number',
-					min: 0,
-					max: 200,
-					step: 1,
-					defaultValue: 40
+					label: 'Layout',
+					defaultOpen: true,
+					fields: [
+						{
+							key: 'design.layout.display.breakpoint_base',
+							label: 'Display',
+							type: 'select',
+							options: [
+								{ label: 'Block', value: 'block' },
+								{ label: 'Flex', value: 'flex' },
+								{ label: 'Grid', value: 'grid' },
+								{ label: 'Inline Block', value: 'inline-block' },
+								{ label: 'None', value: 'none' }
+							],
+							defaultValue: 'block'
+						},
+						{
+							key: 'design.layout.flex_direction.breakpoint_base',
+							label: 'Flex Direction',
+							type: 'select',
+							options: [
+								{ label: 'Row', value: 'row' },
+								{ label: 'Column', value: 'column' },
+								{ label: 'Row Reverse', value: 'row-reverse' },
+								{ label: 'Column Reverse', value: 'column-reverse' }
+							],
+							defaultValue: 'row',
+							description: 'Only applies when Display is set to Flex'
+						},
+						{
+							key: 'design.layout.justify_content.breakpoint_base',
+							label: 'Justify Content',
+							type: 'select',
+							options: [
+								{ label: 'Flex Start', value: 'flex-start' },
+								{ label: 'Center', value: 'center' },
+								{ label: 'Flex End', value: 'flex-end' },
+								{ label: 'Space Between', value: 'space-between' },
+								{ label: 'Space Around', value: 'space-around' },
+								{ label: 'Space Evenly', value: 'space-evenly' }
+							],
+							description: 'Only applies when Display is set to Flex'
+						},
+						{
+							key: 'design.layout.align_items.breakpoint_base',
+							label: 'Align Items',
+							type: 'select',
+							options: [
+								{ label: 'Flex Start', value: 'flex-start' },
+								{ label: 'Center', value: 'center' },
+								{ label: 'Flex End', value: 'flex-end' },
+								{ label: 'Stretch', value: 'stretch' },
+								{ label: 'Baseline', value: 'baseline' }
+							],
+							description: 'Only applies when Display is set to Flex'
+						},
+						{
+							key: 'design.layout.gap.breakpoint_base.value',
+							label: 'Gap',
+							type: 'number',
+							min: 0,
+							max: 200,
+							step: 1,
+							description: 'Space between child elements'
+						}
+					]
 				},
 				{
-					key: 'design.background.color.breakpoint_base',
-					label: 'Background Color',
-					type: 'color',
-					defaultValue: 'transparent'
+					label: 'Background',
+					fields: [
+						{
+							key: 'design.background.type',
+							label: 'Background Type',
+							type: 'select',
+							options: [
+								{ label: 'Color', value: 'color' },
+								{ label: 'Gradient', value: 'gradient' },
+								{ label: 'Image', value: 'image' },
+								{ label: 'Video', value: 'video' }
+							],
+							defaultValue: 'color'
+						},
+						{
+							key: 'design.background.color.breakpoint_base',
+							label: 'Background Color',
+							type: 'color',
+							defaultValue: 'transparent'
+						}
+					]
+				},
+				{
+					label: 'Size',
+					fields: [
+						{
+							key: 'design.size.width.breakpoint_base.value',
+							label: 'Width',
+							type: 'number',
+							min: 0,
+							max: 100,
+							step: 1,
+							description: 'Width as percentage'
+						},
+						{
+							key: 'design.size.height.breakpoint_base.value',
+							label: 'Height',
+							type: 'number',
+							min: 0,
+							max: 2000,
+							step: 1,
+							description: 'Custom height in pixels'
+						},
+						{
+							key: 'design.size.min_height.breakpoint_base.value',
+							label: 'Min Height',
+							type: 'number',
+							min: 0,
+							max: 2000,
+							step: 1,
+							description: 'Minimum height in pixels'
+						}
+					]
+				},
+				{
+					label: 'Spacing',
+					fields: [
+						{
+							key: 'design.spacing.padding.breakpoint_base.all.value',
+							label: 'Padding (All Sides)',
+							type: 'number',
+							min: 0,
+							max: 200,
+							step: 1,
+							defaultValue: 40
+						},
+						{
+							key: 'design.spacing.margin.breakpoint_base.top.value',
+							label: 'Margin Top',
+							type: 'number',
+							min: -200,
+							max: 200,
+							step: 1,
+							defaultValue: 0
+						},
+						{
+							key: 'design.spacing.margin.breakpoint_base.bottom.value',
+							label: 'Margin Bottom',
+							type: 'number',
+							min: -200,
+							max: 200,
+							step: 1,
+							defaultValue: 0
+						}
+					]
+				},
+				{
+					label: 'Borders',
+					fields: [
+						{
+							key: 'design.border.border_radius.breakpoint_base.all.value',
+							label: 'Border Radius',
+							type: 'number',
+							min: 0,
+							max: 200,
+							step: 1,
+							defaultValue: 0,
+							description: 'Rounded corners'
+						},
+						{
+							key: 'design.border.border_width.breakpoint_base.all.value',
+							label: 'Border Width',
+							type: 'number',
+							min: 0,
+							max: 20,
+							step: 1,
+							defaultValue: 0
+						},
+						{
+							key: 'design.border.border_color.breakpoint_base',
+							label: 'Border Color',
+							type: 'color',
+							defaultValue: '#000000'
+						},
+						{
+							key: 'design.border.border_style.breakpoint_base',
+							label: 'Border Style',
+							type: 'select',
+							options: [
+								{ label: 'None', value: 'none' },
+								{ label: 'Solid', value: 'solid' },
+								{ label: 'Dashed', value: 'dashed' },
+								{ label: 'Dotted', value: 'dotted' },
+								{ label: 'Double', value: 'double' }
+							],
+							defaultValue: 'solid'
+						}
+					]
 				}
 			]
 		}
@@ -347,7 +536,11 @@ export const getNestedValue = (obj: unknown, path: string): unknown => {
 /**
  * Set value in nested object using dot notation path
  */
-export const setNestedValue = (obj: Record<string, unknown>, path: string, value: unknown): void => {
+export const setNestedValue = (
+	obj: Record<string, unknown>,
+	path: string,
+	value: unknown
+): void => {
 	const keys = path.split('.');
 	const lastKey = keys.pop();
 
@@ -365,3 +558,21 @@ export const setNestedValue = (obj: Record<string, unknown>, path: string, value
 	current[lastKey] = value;
 };
 
+/**
+ * Check if item is a FieldGroup
+ */
+export const isFieldGroup = (item: FieldConfig | FieldGroup): item is FieldGroup => {
+	return 'fields' in item && Array.isArray((item as FieldGroup).fields);
+};
+
+/**
+ * Count total fields in an array (including fields inside groups)
+ */
+export const countFields = (items: (FieldConfig | FieldGroup)[]): number => {
+	return items.reduce((count, item) => {
+		if (isFieldGroup(item)) {
+			return count + item.fields.length;
+		}
+		return count + 1;
+	}, 0);
+};

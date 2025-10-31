@@ -61,7 +61,9 @@ Blocks that **CANNOT** contain children. Self-contained elements.
 		isElementSelected,
 		extractAllStyles,
 		getLeafBlockClasses,
-		getTextContent
+		getTextContent,
+		getHtmlId,
+		getCssClasses
 	} from './block-utils';
 
 	let { element }: { element: BuilderElement } = $props();
@@ -70,12 +72,18 @@ Blocks that **CANNOT** contain children. Self-contained elements.
 	const isSelected = $derived(isElementSelected(element.id));
 	const text = $derived(getTextContent(element, 'Default Text'));
 	const styles = $derived(extractAllStyles(element.properties.design));
+	const htmlId = $derived(getHtmlId(element));
+	const customClasses = $derived(getCssClasses(element));
+	const combinedClasses = $derived(
+		[getLeafBlockClasses(isSelected), customClasses].filter(Boolean).join(' ')
+	);
 </script>
 
 <div
 	data-element-id={element.id}
 	data-element-type={element.type}
-	class={getLeafBlockClasses(isSelected)}
+	id={htmlId}
+	class={combinedClasses}
 	style={styles}
 	onclick={handleClick}
 	role="button"
@@ -143,7 +151,9 @@ For blocks needing specific styles (not all styles):
 		createKeyDownHandler,
 		isElementSelected,
 		extractAllStyles,
-		getContainerBlockClasses
+		getContainerBlockClasses,
+		getHtmlId,
+		getCssClasses
 	} from './block-utils';
 
 	let { element }: { element: BuilderElement } = $props();
@@ -152,12 +162,18 @@ For blocks needing specific styles (not all styles):
 	const handleKeyDown = createKeyDownHandler(element.id);
 	const isSelected = $derived(isElementSelected(element.id));
 	const styles = $derived(extractAllStyles(element.properties.design));
+	const htmlId = $derived(getHtmlId(element));
+	const customClasses = $derived(getCssClasses(element));
+	const combinedClasses = $derived(
+		[getContainerBlockClasses(isSelected), customClasses].filter(Boolean).join(' ')
+	);
 </script>
 
 <div
 	data-element-id={element.id}
 	data-element-type={element.type}
-	class={getContainerBlockClasses(isSelected)}
+	id={htmlId}
+	class={combinedClasses}
 	style={styles}
 	onclick={handleClick}
 	onkeydown={handleKeyDown}

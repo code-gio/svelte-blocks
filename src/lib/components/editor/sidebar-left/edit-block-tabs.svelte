@@ -2,8 +2,15 @@
 	import * as Field from '$lib/components/ui/field/index.js';
 	import type { BuilderElement } from '$lib/types/block';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
-	import { getBlockFieldConfig, getNestedValue, setNestedValue } from './field-configs';
+	import type { FieldConfig, FieldGroup } from './field-configs';
+	import {
+		getBlockFieldConfig,
+		getNestedValue,
+		setNestedValue,
+		isFieldGroup
+	} from './field-configs';
 	import FieldRenderer from './field-renderer.svelte';
+	import FieldGroupRenderer from './field-group-renderer.svelte';
 
 	interface Props {
 		element: BuilderElement;
@@ -13,7 +20,7 @@
 	let { element, tab }: Props = $props();
 
 	const fieldConfig = $derived(getBlockFieldConfig(element.type));
-	const fields = $derived(
+	const items = $derived(
 		tab === 'content'
 			? fieldConfig.content || []
 			: tab === 'design'
@@ -39,12 +46,16 @@
 
 <div class="space-y-4 p-4">
 	<Field.Group>
-		{#each fields as field (field.key)}
-			<FieldRenderer
-				config={field}
-				value={getFieldValue(field.key)}
-				onchange={(value) => handleFieldChange(field.key, value)}
-			/>
+		{#each items as item, index (isFieldGroup(item) ? `group-${index}` : item.key)}
+			{#if isFieldGroup(item)}
+				<FieldGroupRenderer group={item} {getFieldValue} {handleFieldChange} />
+			{:else}
+				<FieldRenderer
+					config={item}
+					value={getFieldValue(item.key)}
+					onchange={(value) => handleFieldChange(item.key, value)}
+				/>
+			{/if}
 		{/each}
 	</Field.Group>
 </div>

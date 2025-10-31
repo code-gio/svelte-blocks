@@ -3,7 +3,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
 	import { getBlockById } from '$lib/components/editor/renderer/block-registry.js';
-	import { getBlockFieldConfig } from './field-configs';
+	import { getBlockFieldConfig, countFields } from './field-configs';
 	import EditBlockTabs from './edit-block-tabs.svelte';
 
 	const selectedElement = $derived(
@@ -15,10 +15,10 @@
 	const blockInfo = $derived(selectedElement ? getBlockById(selectedElement.type) : null);
 	const elementLabel = $derived(blockInfo?.name || selectedElement?.type || 'Block');
 
-	// Check which tabs have fields
+	// Check which tabs have fields (count fields in groups too)
 	const fieldConfig = $derived(selectedElement ? getBlockFieldConfig(selectedElement.type) : null);
-	const hasContentFields = $derived((fieldConfig?.content?.length ?? 0) > 0);
-	const hasDesignFields = $derived((fieldConfig?.design?.length ?? 0) > 0);
+	const hasContentFields = $derived(countFields(fieldConfig?.content || []) > 0);
+	const hasDesignFields = $derived(countFields(fieldConfig?.design || []) > 0);
 
 	// Determine default tab (first available tab)
 	const defaultTab = $derived(
