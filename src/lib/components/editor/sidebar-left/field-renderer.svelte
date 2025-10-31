@@ -1,9 +1,11 @@
 <script lang="ts">
 	import * as Field from '$lib/components/ui/field/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
+	import { Info } from '@lucide/svelte';
 	import type { FieldConfig } from './field-configs';
 
 	interface Props {
@@ -15,7 +17,7 @@
 	let { config, value, onchange }: Props = $props();
 
 	const currentValue = $derived(value ?? config.defaultValue);
-	
+
 	// Special handling for CSS classes (stored as array, displayed as string)
 	const stringValue = $derived(
 		config.key === 'settings.advanced.css_classes'
@@ -24,7 +26,7 @@
 				: String(currentValue ?? '')
 			: String(currentValue ?? '')
 	);
-	
+
 	const numberValue = $derived(Number(currentValue) || 0);
 	const booleanValue = $derived(Boolean(currentValue));
 
@@ -37,10 +39,39 @@
 			onchange(val);
 		}
 	};
+
+	// For Select component - bind:value approach
+	let selectValue = $state('');
+
+	// Initialize and watch for external value changes
+	$effect(() => {
+		selectValue = stringValue;
+	});
+
+	// Watch for selectValue changes and propagate to parent
+	$effect(() => {
+		if (selectValue && selectValue !== stringValue) {
+			handleChange(selectValue);
+		}
+	});
 </script>
 
 <Field.Field>
-	<Field.Label for={config.key}>{config.label}</Field.Label>
+	<div class="flex items-center gap-2">
+		<Field.Label for={config.key} class="text-xs font-medium">{config.label}</Field.Label>
+		{#if config.description}
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger class="inline-flex">
+						<Info class="h-3 w-3 text-muted-foreground" />
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p class="text-xs">{config.description}</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
+		{/if}
+	</div>
 
 	{#if config.type === 'text'}
 		<Input
@@ -85,15 +116,17 @@
 			/>
 		</div>
 	{:else if config.type === 'select' && config.options}
-		<Select.Root type="single" value={stringValue} onchange={(v) => v && handleChange(v.value)}>
-			<Select.Trigger id={config.key}>
-				<span>
-					{config.options.find((opt) => opt.value === currentValue)?.label || 'Select...'}
-				</span>
+		{@const triggerContent =
+			config.options.find((opt) => String(opt.value) === selectValue)?.label || 'Select...'}
+		<Select.Root type="single" bind:value={selectValue}>
+			<Select.Trigger id={config.key} class="w-full">
+				{triggerContent}
 			</Select.Trigger>
 			<Select.Content>
-				{#each config.options as option}
-					<Select.Item value={String(option.value)}>{option.label}</Select.Item>
+				{#each config.options as option (option.value)}
+					<Select.Item value={String(option.value)} label={option.label}>
+						{option.label}
+					</Select.Item>
 				{/each}
 			</Select.Content>
 		</Select.Root>
@@ -106,9 +139,4 @@
 			/>
 		</div>
 	{/if}
-
-	{#if config.description}
-		<Field.Description>{config.description}</Field.Description>
-	{/if}
 </Field.Field>
-

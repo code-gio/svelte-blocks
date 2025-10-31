@@ -66,7 +66,7 @@ Blocks that **CANNOT** contain children. Self-contained elements.
 		getCssClasses
 	} from './block-utils';
 
-	let { element }: { element: BuilderElement } = $props();
+  let { element }: { element: BuilderElement } = $props();
 
 	const handleClick = createClickHandler(element.id);
 	const isSelected = $derived(isElementSelected(element.id));
@@ -127,13 +127,13 @@ For blocks needing specific styles (not all styles):
 </script>
 
 <div
-	data-element-id={element.id}
-	data-element-type={element.type}
+  data-element-id={element.id}
+  data-element-type={element.type}
 	class={getLeafBlockClasses(isSelected)}
 	style={styles}
-	onclick={handleClick}
-	role="button"
-	tabindex="0"
+  onclick={handleClick}
+  role="button"
+  tabindex="0"
 >
 	{text}
 </div>
@@ -156,7 +156,7 @@ For blocks needing specific styles (not all styles):
 		getCssClasses
 	} from './block-utils';
 
-	let { element }: { element: BuilderElement } = $props();
+  let { element }: { element: BuilderElement } = $props();
 
 	const handleClick = createClickHandler(element.id);
 	const handleKeyDown = createKeyDownHandler(element.id);
@@ -170,26 +170,26 @@ For blocks needing specific styles (not all styles):
 </script>
 
 <div
-	data-element-id={element.id}
-	data-element-type={element.type}
+  data-element-id={element.id}
+  data-element-type={element.type}
 	id={htmlId}
 	class={combinedClasses}
 	style={styles}
-	onclick={handleClick}
-	onkeydown={handleKeyDown}
-	role="button"
-	tabindex="0"
+  onclick={handleClick}
+  onkeydown={handleKeyDown}
+  role="button"
+  tabindex="0"
 >
-	{#if element.children.length > 0}
-		<DropZone parentId={element.id} index={0} />
-		{#each element.children as child, i (child.id)}
-			<BlockRenderer element={child} />
-			<DropZone parentId={element.id} index={i + 1} />
-		{/each}
-	{:else}
-		<DropZone parentId={element.id} index={0} />
+  {#if element.children.length > 0}
+    <DropZone parentId={element.id} index={0} />
+    {#each element.children as child, i (child.id)}
+      <BlockRenderer element={child} />
+      <DropZone parentId={element.id} index={i + 1} />
+    {/each}
+  {:else}
+    <DropZone parentId={element.id} index={0} />
 		<div class="pointer-events-none py-8 text-center text-gray-400">Drop blocks here</div>
-	{/if}
+  {/if}
 </div>
 ```
 
@@ -204,13 +204,13 @@ In `block-registry.ts`, add your block type to the appropriate set:
 ```typescript
 // For container blocks
 const CONTAINER_BLOCKS = new Set([
-	// ... existing blocks
+  // ... existing blocks
 	'your-new-container-block'
 ]);
 
 // For leaf blocks
 const LEAF_BLOCKS = new Set([
-	// ... existing blocks
+  // ... existing blocks
 	'your-new-leaf-block'
 ]);
 ```
@@ -236,31 +236,31 @@ In `getDefaultProperties()` function in `block-registry.ts`:
 
 ```typescript
 export const getDefaultProperties = (type: string): ElementProperties => {
-	const defaults: Record<string, ElementProperties> = {
-		// ... existing defaults
-		'your-block-type': {
-			content: {
+  const defaults: Record<string, ElementProperties> = {
+    // ... existing defaults
+    'your-block-type': {
+      content: {
 				text: 'Default content'
-				// ... other content properties
-			},
-			design: {
-				typography: {
-					font_size: {
-						breakpoint_base: { value: 16, unit: 'px' }
-					}
-				},
-				spacing: {
-					padding: {
-						breakpoint_base: {
-							all: { value: 10, unit: 'px' }
-						}
-					}
-				}
-			}
-		}
-	};
-
-	return defaults[type] || { design: {}, content: {}, settings: {} };
+        // ... other content properties
+      },
+      design: {
+        typography: {
+          font_size: {
+            breakpoint_base: { value: 16, unit: 'px' }
+          }
+        },
+        spacing: {
+          padding: {
+            breakpoint_base: {
+              all: { value: 10, unit: 'px' }
+            }
+          }
+        }
+      }
+    }
+  };
+  
+  return defaults[type] || { design: {}, content: {}, settings: {} };
 };
 ```
 
@@ -272,11 +272,11 @@ import YourBlock from './blocks/your-block.svelte';
 
 // Add to registry
 export const BLOCK_COMPONENT_REGISTRY: Record<string, BlockComponent> = {
-	section: SectionBlock,
-	heading: HeadingBlock,
-	text: TextBlock,
-	button: ButtonBlock,
-	'your-block-type': YourBlock
+  section: SectionBlock,
+  heading: HeadingBlock,
+  text: TextBlock,
+  button: ButtonBlock,
+  'your-block-type': YourBlock
 };
 ```
 
@@ -288,9 +288,9 @@ export const BLOCK_COMPONENT_REGISTRY: Record<string, BlockComponent> = {
 
 ```typescript
 interface ElementProperties {
-	content?: ContentProperties;
-	design?: DesignProperties;
-	settings?: SettingsProperties;
+  content?: ContentProperties;
+  design?: DesignProperties;
+  settings?: SettingsProperties;
 }
 ```
 
@@ -298,24 +298,24 @@ interface ElementProperties {
 
 ```typescript
 interface ContentProperties {
-	// Text content
-	text?: string;
-	html?: string;
-	tag?: string; // For headings: h1, h2, h3, etc.
-
-	// Media
-	image?: MediaObject;
-	video?: MediaObject;
-	icon?: IconObject;
-
-	// Links
-	link?: LinkObject;
-
-	// Lists/Arrays
-	items?: Array<any>;
-
-	// Custom properties specific to your block
-	[key: string]: unknown;
+  // Text content
+  text?: string;
+  html?: string;
+  tag?: string; // For headings: h1, h2, h3, etc.
+  
+  // Media
+  image?: MediaObject;
+  video?: MediaObject;
+  icon?: IconObject;
+  
+  // Links
+  link?: LinkObject;
+  
+  // Lists/Arrays
+  items?: Array<any>;
+  
+  // Custom properties specific to your block
+  [key: string]: unknown;
 }
 ```
 
@@ -325,18 +325,18 @@ All design properties support responsive values:
 
 ```typescript
 type ResponsiveValue<T> = {
-	breakpoint_base?: T;
-	breakpoint_tablet_landscape?: T;
-	breakpoint_tablet_portrait?: T;
-	breakpoint_phone_landscape?: T;
-	breakpoint_phone_portrait?: T;
+  breakpoint_base?: T;
+  breakpoint_tablet_landscape?: T;
+  breakpoint_tablet_portrait?: T;
+  breakpoint_phone_landscape?: T;
+  breakpoint_phone_portrait?: T;
 };
 
 interface DesignProperties {
 	layout?: LayoutProperties; // display, flex, grid
 	spacing?: SpacingProperties; // margin, padding
-	typography?: TypographyProperties; // font, size, color
-	background?: BackgroundProperties; // color, gradient, image
+  typography?: TypographyProperties; // font, size, color
+  background?: BackgroundProperties; // color, gradient, image
 	border?: BorderProperties; // border, radius, shadow
 	effects?: EffectsProperties; // opacity, transform
 	size?: SizeProperties; // width, height
@@ -431,27 +431,27 @@ class:hover:!border-blue-400={!isSelected}
 
 ```typescript
 const getStyles = (): string => {
-	const styles: string[] = [];
-	const { design } = element.properties;
+  const styles: string[] = [];
+  const { design } = element.properties;
 
-	// Always check for breakpoint_base first
-	if (design?.typography?.font_size?.breakpoint_base) {
-		const size = design.typography.font_size.breakpoint_base;
-		styles.push(`font-size: ${size.value}${size.unit}`);
-	}
+  // Always check for breakpoint_base first
+  if (design?.typography?.font_size?.breakpoint_base) {
+    const size = design.typography.font_size.breakpoint_base;
+    styles.push(`font-size: ${size.value}${size.unit}`);
+  }
 
-	// Handle spacing with all/individual sides
-	if (design?.spacing?.padding?.breakpoint_base) {
-		const p = design.spacing.padding.breakpoint_base;
-		if (p.all) {
-			styles.push(`padding: ${p.all.value}${p.all.unit}`);
-		} else {
-			if (p.top) styles.push(`padding-top: ${p.top.value}${p.top.unit}`);
-			if (p.right) styles.push(`padding-right: ${p.right.value}${p.right.unit}`);
-			if (p.bottom) styles.push(`padding-bottom: ${p.bottom.value}${p.bottom.unit}`);
-			if (p.left) styles.push(`padding-left: ${p.left.value}${p.left.unit}`);
-		}
-	}
+  // Handle spacing with all/individual sides
+  if (design?.spacing?.padding?.breakpoint_base) {
+    const p = design.spacing.padding.breakpoint_base;
+    if (p.all) {
+      styles.push(`padding: ${p.all.value}${p.all.unit}`);
+    } else {
+      if (p.top) styles.push(`padding-top: ${p.top.value}${p.top.unit}`);
+      if (p.right) styles.push(`padding-right: ${p.right.value}${p.right.unit}`);
+      if (p.bottom) styles.push(`padding-bottom: ${p.bottom.value}${p.bottom.unit}`);
+      if (p.left) styles.push(`padding-left: ${p.left.value}${p.left.unit}`);
+    }
+  }
 
 	return styles.join('; ');
 };
@@ -498,64 +498,64 @@ const getStyles = (): string => {
 	import type { BuilderElement } from '$lib/types/block';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
 
-	let { element }: { element: BuilderElement } = $props();
+  let { element }: { element: BuilderElement } = $props();
 
-	const handleClick = (e: MouseEvent) => {
-		e.stopPropagation();
-		editorManager.selectElement(element.id);
-	};
+  const handleClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    editorManager.selectElement(element.id);
+  };
 
-	const isSelected = $derived(editorManager.selectedElementId === element.id);
+  const isSelected = $derived(editorManager.selectedElementId === element.id);
 	const text = $derived(element.properties.content?.text || 'Badge');
 
-	const getStyles = (): string => {
-		const styles: string[] = [];
-		const { design } = element.properties;
+  const getStyles = (): string => {
+    const styles: string[] = [];
+    const { design } = element.properties;
 
-		if (design?.typography?.font_size?.breakpoint_base) {
-			const size = design.typography.font_size.breakpoint_base;
-			styles.push(`font-size: ${size.value}${size.unit}`);
-		}
+    if (design?.typography?.font_size?.breakpoint_base) {
+      const size = design.typography.font_size.breakpoint_base;
+      styles.push(`font-size: ${size.value}${size.unit}`);
+    }
 
-		if (design?.typography?.color?.breakpoint_base) {
-			styles.push(`color: ${design.typography.color.breakpoint_base}`);
-		}
+    if (design?.typography?.color?.breakpoint_base) {
+      styles.push(`color: ${design.typography.color.breakpoint_base}`);
+    }
 
-		if (design?.background?.color?.breakpoint_base) {
-			styles.push(`background-color: ${design.background.color.breakpoint_base}`);
-		}
+    if (design?.background?.color?.breakpoint_base) {
+      styles.push(`background-color: ${design.background.color.breakpoint_base}`);
+    }
 
-		if (design?.spacing?.padding?.breakpoint_base?.all) {
-			const p = design.spacing.padding.breakpoint_base.all;
-			styles.push(`padding: ${p.value}${p.unit}`);
-		}
+    if (design?.spacing?.padding?.breakpoint_base?.all) {
+      const p = design.spacing.padding.breakpoint_base.all;
+      styles.push(`padding: ${p.value}${p.unit}`);
+    }
 
-		if (design?.border?.border_radius?.breakpoint_base?.all) {
-			const r = design.border.border_radius.breakpoint_base.all;
-			styles.push(`border-radius: ${r.value}${r.unit}`);
-		}
+    if (design?.border?.border_radius?.breakpoint_base?.all) {
+      const r = design.border.border_radius.breakpoint_base.all;
+      styles.push(`border-radius: ${r.value}${r.unit}`);
+    }
 
 		return styles.join('; ');
-	};
+  };
 </script>
 
 <span
-	data-element-id={element.id}
-	data-element-type={element.type}
-	class="inline-block cursor-pointer transition-all duration-150"
-	class:ring-2={isSelected}
-	class:ring-blue-500={isSelected}
-	class:hover:outline={!isSelected}
-	class:hover:outline-2={!isSelected}
-	class:hover:outline-dashed={!isSelected}
-	class:hover:outline-gray-400={!isSelected}
-	class:hover:outline-offset-2={!isSelected}
-	style={getStyles()}
-	onclick={handleClick}
-	role="button"
-	tabindex="0"
+  data-element-id={element.id}
+  data-element-type={element.type}
+  class="inline-block cursor-pointer transition-all duration-150"
+  class:ring-2={isSelected}
+  class:ring-blue-500={isSelected}
+  class:hover:outline={!isSelected}
+  class:hover:outline-2={!isSelected}
+  class:hover:outline-dashed={!isSelected}
+  class:hover:outline-gray-400={!isSelected}
+  class:hover:outline-offset-2={!isSelected}
+  style={getStyles()}
+  onclick={handleClick}
+  role="button"
+  tabindex="0"
 >
-	{text}
+  {text}
 </span>
 ```
 
@@ -639,74 +639,74 @@ export const BLOCK_COMPONENT_REGISTRY: Record<string, BlockComponent> = {
 	import BlockRenderer from '../block-renderer.svelte';
 	import DropZone from '../drop-zone.svelte';
 
-	let { element }: { element: BuilderElement } = $props();
+  let { element }: { element: BuilderElement } = $props();
 
-	const handleClick = (e: MouseEvent) => {
-		e.stopPropagation();
-		editorManager.selectElement(element.id);
-	};
+  const handleClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    editorManager.selectElement(element.id);
+  };
 
-	const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
 		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			e.stopPropagation();
-			editorManager.selectElement(element.id);
-		}
-	};
+      e.preventDefault();
+      e.stopPropagation();
+      editorManager.selectElement(element.id);
+    }
+  };
 
-	const isSelected = $derived(editorManager.selectedElementId === element.id);
-	const columnCount = $derived(element.properties.content?.columns || 2);
+  const isSelected = $derived(editorManager.selectedElementId === element.id);
+  const columnCount = $derived(element.properties.content?.columns || 2);
 
-	const getStyles = (): string => {
-		const styles: string[] = [];
-		const { design } = element.properties;
+  const getStyles = (): string => {
+    const styles: string[] = [];
+    const { design } = element.properties;
 
-		// Grid layout
-		styles.push(`display: grid`);
-		styles.push(`grid-template-columns: repeat(${columnCount}, 1fr)`);
+    // Grid layout
+    styles.push(`display: grid`);
+    styles.push(`grid-template-columns: repeat(${columnCount}, 1fr)`);
 
-		if (design?.layout?.gap?.breakpoint_base) {
-			const gap = design.layout.gap.breakpoint_base;
-			styles.push(`gap: ${gap.value}${gap.unit}`);
-		}
+    if (design?.layout?.gap?.breakpoint_base) {
+      const gap = design.layout.gap.breakpoint_base;
+      styles.push(`gap: ${gap.value}${gap.unit}`);
+    }
 
-		if (design?.spacing?.padding?.breakpoint_base) {
-			const p = design.spacing.padding.breakpoint_base;
-			if (p.all) {
-				styles.push(`padding: ${p.all.value}${p.all.unit}`);
-			}
-		}
+    if (design?.spacing?.padding?.breakpoint_base) {
+      const p = design.spacing.padding.breakpoint_base;
+      if (p.all) {
+        styles.push(`padding: ${p.all.value}${p.all.unit}`);
+      }
+    }
 
 		return styles.join('; ');
-	};
+  };
 </script>
 
 <div
-	data-element-id={element.id}
-	data-element-type={element.type}
+  data-element-id={element.id}
+  data-element-type={element.type}
 	class="relative min-h-[100px] border-2 border-transparent transition-all duration-150"
-	class:ring-2={isSelected}
-	class:ring-blue-500={isSelected}
-	class:!border-dashed={!isSelected}
-	class:hover:!border-blue-400={!isSelected}
-	style={getStyles()}
-	onclick={handleClick}
-	onkeydown={handleKeyDown}
-	role="button"
-	tabindex="0"
+  class:ring-2={isSelected}
+  class:ring-blue-500={isSelected}
+  class:!border-dashed={!isSelected}
+  class:hover:!border-blue-400={!isSelected}
+  style={getStyles()}
+  onclick={handleClick}
+  onkeydown={handleKeyDown}
+  role="button"
+  tabindex="0"
 >
-	{#if element.children.length > 0}
-		<DropZone parentId={element.id} index={0} />
-		{#each element.children as child, i (child.id)}
-			<div class="column-item">
-				<BlockRenderer element={child} />
-			</div>
-			<DropZone parentId={element.id} index={i + 1} />
-		{/each}
-	{:else}
-		<DropZone parentId={element.id} index={0} />
+  {#if element.children.length > 0}
+    <DropZone parentId={element.id} index={0} />
+    {#each element.children as child, i (child.id)}
+      <div class="column-item">
+        <BlockRenderer element={child} />
+      </div>
+      <DropZone parentId={element.id} index={i + 1} />
+    {/each}
+  {:else}
+    <DropZone parentId={element.id} index={0} />
 		<div class="pointer-events-none py-8 text-center text-gray-400">Drop blocks into columns</div>
-	{/if}
+  {/if}
 </div>
 ```
 
@@ -769,16 +769,16 @@ const imageUrl = $derived(element.properties.content?.image?.url || '/placeholde
 
 ```typescript
 const getStyles = (): string => {
-	const styles: string[] = [];
-	const { design } = element.properties;
+  const styles: string[] = [];
+  const { design } = element.properties;
 
-	// Always provide base styles
-	styles.push('display: block');
+  // Always provide base styles
+  styles.push('display: block');
 
-	// Conditionally add user styles
-	if (design?.background?.color?.breakpoint_base) {
-		styles.push(`background-color: ${design.background.color.breakpoint_base}`);
-	}
+  // Conditionally add user styles
+  if (design?.background?.color?.breakpoint_base) {
+    styles.push(`background-color: ${design.background.color.breakpoint_base}`);
+  }
 
 	return styles.join('; ');
 };

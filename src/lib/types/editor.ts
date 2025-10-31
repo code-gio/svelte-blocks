@@ -28,6 +28,6 @@ export type EditorViewMode = 'desktop' | 'tablet' | 'mobile';
 
 // Drag and Drop Types
 export interface DragState {
-	blockType: string | null;
-	blockName: string | null;
+  blockType: string | null;
+  blockName: string | null;
 }

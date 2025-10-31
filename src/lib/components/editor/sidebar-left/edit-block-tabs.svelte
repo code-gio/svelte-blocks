@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Field from '$lib/components/ui/field/index.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { BuilderElement } from '$lib/types/block';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
 	import type { FieldConfig, FieldGroup } from './field-configs';
@@ -44,19 +44,24 @@
 	};
 </script>
 
-<div class="space-y-4 p-4">
-	<Field.Group>
-		{#each items as item, index (isFieldGroup(item) ? `group-${index}` : item.key)}
-			{#if isFieldGroup(item)}
-				<FieldGroupRenderer group={item} {getFieldValue} {handleFieldChange} />
-			{:else}
-				<FieldRenderer
-					config={item}
-					value={getFieldValue(item.key)}
-					onchange={(value) => handleFieldChange(item.key, value)}
-				/>
-			{/if}
-		{/each}
-	</Field.Group>
-</div>
-
+<Sidebar.Group>
+	<Sidebar.GroupContent>
+		<Sidebar.Menu>
+			{#each items as item, index (isFieldGroup(item) ? `group-${index}` : item.key)}
+				{#if isFieldGroup(item)}
+					<FieldGroupRenderer group={item} {getFieldValue} {handleFieldChange} />
+				{:else}
+					<Sidebar.MenuItem>
+						<div class="px-3 py-2">
+							<FieldRenderer
+								config={item}
+								value={getFieldValue(item.key)}
+								onchange={(value) => handleFieldChange(item.key, value)}
+							/>
+						</div>
+					</Sidebar.MenuItem>
+				{/if}
+			{/each}
+		</Sidebar.Menu>
+	</Sidebar.GroupContent>
+</Sidebar.Group>

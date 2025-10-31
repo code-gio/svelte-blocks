@@ -148,31 +148,142 @@ export const getBlockFieldConfig = (blockType: string): BlockFieldConfig => {
 			],
 			design: [
 				{
-					key: 'design.typography.font_size.breakpoint_base.value',
-					label: 'Font Size',
-					type: 'number',
-					min: 8,
-					max: 200,
-					step: 1,
-					defaultValue: 16
+					label: 'Size',
+					fields: [
+						{
+							key: 'design.size.width.breakpoint_base.value',
+							label: 'Width',
+							type: 'number',
+							min: 0,
+							max: 100,
+							step: 1,
+							description: 'Width as percentage'
+						}
+					]
 				},
 				{
-					key: 'design.typography.color.breakpoint_base',
-					label: 'Text Color',
-					type: 'color',
-					defaultValue: '#000000'
+					label: 'Typography',
+					defaultOpen: true,
+					fields: [
+						{
+							key: 'design.typography.font_family.breakpoint_base',
+							label: 'Font Family',
+							type: 'text',
+							placeholder: 'Arial, sans-serif'
+						},
+						{
+							key: 'design.typography.font_size.breakpoint_base.value',
+							label: 'Font Size',
+							type: 'number',
+							min: 8,
+							max: 200,
+							step: 1,
+							defaultValue: 16,
+							description: 'Font size in pixels'
+						},
+						{
+							key: 'design.typography.font_weight.breakpoint_base',
+							label: 'Font Weight',
+							type: 'select',
+							options: [
+								{ label: 'Thin (100)', value: 100 },
+								{ label: 'Extra Light (200)', value: 200 },
+								{ label: 'Light (300)', value: 300 },
+								{ label: 'Normal (400)', value: 400 },
+								{ label: 'Medium (500)', value: 500 },
+								{ label: 'Semi Bold (600)', value: 600 },
+								{ label: 'Bold (700)', value: 700 },
+								{ label: 'Extra Bold (800)', value: 800 },
+								{ label: 'Black (900)', value: 900 }
+							],
+							defaultValue: 400
+						},
+						{
+							key: 'design.typography.color.breakpoint_base',
+							label: 'Text Color',
+							type: 'color',
+							defaultValue: '#000000'
+						},
+						{
+							key: 'design.typography.text_align.breakpoint_base',
+							label: 'Text Align',
+							type: 'select',
+							options: [
+								{ label: 'Left', value: 'left' },
+								{ label: 'Center', value: 'center' },
+								{ label: 'Right', value: 'right' },
+								{ label: 'Justify', value: 'justify' }
+							],
+							defaultValue: 'left'
+						},
+						{
+							key: 'design.typography.line_height.breakpoint_base.value',
+							label: 'Line Height',
+							type: 'number',
+							min: 0.5,
+							max: 5,
+							step: 0.1,
+							description: 'Line height multiplier'
+						},
+						{
+							key: 'design.typography.letter_spacing.breakpoint_base.value',
+							label: 'Letter Spacing',
+							type: 'number',
+							min: -5,
+							max: 20,
+							step: 0.1,
+							description: 'Letter spacing in pixels'
+						},
+						{
+							key: 'design.typography.text_transform.breakpoint_base',
+							label: 'Text Transform',
+							type: 'select',
+							options: [
+								{ label: 'None', value: 'none' },
+								{ label: 'Uppercase', value: 'uppercase' },
+								{ label: 'Lowercase', value: 'lowercase' },
+								{ label: 'Capitalize', value: 'capitalize' }
+							],
+							defaultValue: 'none'
+						},
+						{
+							key: 'design.typography.text_decoration.breakpoint_base',
+							label: 'Text Decoration',
+							type: 'select',
+							options: [
+								{ label: 'None', value: 'none' },
+								{ label: 'Underline', value: 'underline' },
+								{ label: 'Overline', value: 'overline' },
+								{ label: 'Line Through', value: 'line-through' }
+							],
+							defaultValue: 'none'
+						}
+					]
 				},
 				{
-					key: 'design.typography.text_align.breakpoint_base',
-					label: 'Text Align',
-					type: 'select',
-					options: [
-						{ label: 'Left', value: 'left' },
-						{ label: 'Center', value: 'center' },
-						{ label: 'Right', value: 'right' },
-						{ label: 'Justify', value: 'justify' }
-					],
-					defaultValue: 'left'
+					label: 'Spacing',
+					fields: [
+						{
+							key: 'design.spacing.margin.breakpoint_base.top.value',
+							label: 'Margin Top',
+							type: 'number',
+							min: -200,
+							max: 200,
+							step: 1,
+							defaultValue: 0,
+							description: 'Space above the text element'
+						},
+						{
+							key: 'design.spacing.margin.breakpoint_base.bottom.value',
+							label: 'Margin Bottom',
+							type: 'number',
+							min: -200,
+							max: 200,
+							step: 1,
+							defaultValue: 0,
+							description: 'Space below the text element'
+						}
+					]
 				}
 			]
 		},
@@ -556,6 +667,41 @@ export const setNestedValue = (
 	}
 
 	current[lastKey] = value;
+
+	// Special handling for UnitValue properties - auto-set unit if missing
+	if (lastKey === 'value' && keys.length > 0) {
+		const parentKey = keys[keys.length - 1];
+		
+		// Line height should be unitless by default
+		if (parentKey === 'line_height' && !current.unit) {
+			current.unit = '';
+		}
+		// Letter spacing defaults to px
+		else if (parentKey === 'letter_spacing' && !current.unit) {
+			current.unit = 'px';
+		}
+		// Gap defaults to px
+		else if (parentKey === 'gap' && !current.unit) {
+			current.unit = 'px';
+		}
+		// Size properties default to px or %
+		else if (
+			(parentKey === 'width' || 
+			 parentKey === 'height' || 
+			 parentKey === 'min_width' || 
+			 parentKey === 'max_width' ||
+			 parentKey === 'min_height' || 
+			 parentKey === 'max_height') && 
+			!current.unit
+		) {
+			// Width typically uses %, height uses px
+			current.unit = parentKey.includes('width') ? '%' : 'px';
+		}
+		// All other spacing/sizing defaults to px
+		else if (!current.unit && typeof value === 'number') {
+			current.unit = 'px';
+		}
+	}
 };
 
 /**

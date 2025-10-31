@@ -94,16 +94,19 @@ export const extractTypographyStyles = (
 		styles.push(`text-transform: ${typo.text_transform[breakpoint]}`);
 	}
 
-	// Line height
+	// Line height (can be unitless or with unit)
 	if (typo.line_height?.[breakpoint]) {
 		const lh = typo.line_height[breakpoint];
-		styles.push(`line-height: ${lh.value}${lh.unit}`);
+		// Line height is typically unitless (e.g., 1.5) or with em/rem
+		const unit = lh.unit && lh.unit !== 'px' ? lh.unit : '';
+		styles.push(`line-height: ${lh.value}${unit}`);
 	}
 
-	// Letter spacing
+	// Letter spacing (defaults to px if no unit)
 	if (typo.letter_spacing?.[breakpoint]) {
 		const ls = typo.letter_spacing[breakpoint];
-		styles.push(`letter-spacing: ${ls.value}${ls.unit}`);
+		const unit = ls.unit || 'px';
+		styles.push(`letter-spacing: ${ls.value}${unit}`);
 	}
 
 	return styles;
