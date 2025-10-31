@@ -195,6 +195,13 @@ class EditorManager {
 			this.leftSidebarMode = 'edit';
 		}
 	};
+
+	updateElementProperties = (id: string, properties: ElementProperties) => {
+		const element = this.findElementById(id);
+		if (element) {
+			element.properties = properties;
+		}
+	};
 }
 
 export const editorManager = EditorManager.getInstance();

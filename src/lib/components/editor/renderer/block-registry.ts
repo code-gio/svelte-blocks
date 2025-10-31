@@ -4,6 +4,10 @@ import SectionBlock from './blocks/section-block.svelte';
 import HeadingBlock from './blocks/heading-block.svelte';
 import TextBlock from './blocks/text-block.svelte';
 import ButtonBlock from './blocks/button-block.svelte';
+import DivBlock from './blocks/div-block.svelte';
+import ColumnBlock from './blocks/column-block.svelte';
+import GridBlock from './blocks/grid-block.svelte';
+import ColumnsBlock from './blocks/columns-block.svelte';
 
 type BlockComponent = Component<{ element: BuilderElement }>;
 
@@ -726,7 +730,11 @@ export const BLOCK_COMPONENT_REGISTRY: Record<string, BlockComponent> = {
 	section: SectionBlock,
 	heading: HeadingBlock,
 	text: TextBlock,
-	button: ButtonBlock
+	button: ButtonBlock,
+	div: DivBlock,
+	column: ColumnBlock,
+	grid: GridBlock,
+	columns: ColumnsBlock
 };
 
 export const getBlockComponent = (type: string): BlockComponent | null => {
@@ -737,6 +745,7 @@ export const getBlockComponent = (type: string): BlockComponent | null => {
 const CONTAINER_BLOCKS = new Set([
 	'section',
 	'columns',
+	'column',
 	'grid',
 	'div',
 	'tabs',
@@ -817,6 +826,72 @@ export const getDefaultProperties = (
 				},
 				layout: {
 					display: { breakpoint_base: 'block' }
+				}
+			}
+		},
+		div: {
+			design: {
+				spacing: {
+					padding: {
+						breakpoint_base: {
+							all: { value: 20, unit: 'px' }
+						}
+					}
+				}
+			}
+		},
+		column: {
+			design: {
+				size: {
+					width: {
+						breakpoint_base: { value: 100, unit: '%' }
+					}
+				},
+				spacing: {
+					padding: {
+						breakpoint_base: {
+							all: { value: 15, unit: 'px' }
+						}
+					}
+				}
+			}
+		},
+		grid: {
+			content: {
+				items_per_row: 4
+			},
+			design: {
+				layout: {
+					gap: {
+						breakpoint_base: { value: 20, unit: 'px' }
+					}
+				},
+				spacing: {
+					padding: {
+						breakpoint_base: {
+							all: { value: 20, unit: 'px' }
+						}
+					}
+				}
+			}
+		},
+		columns: {
+			content: {
+				preset: '50-50'
+			},
+			design: {
+				layout: {
+					display: { breakpoint_base: 'flex' },
+					gap: {
+						breakpoint_base: { value: 20, unit: 'px' }
+					}
+				},
+				spacing: {
+					padding: {
+						breakpoint_base: {
+							all: { value: 20, unit: 'px' }
+						}
+					}
 				}
 			}
 		},
