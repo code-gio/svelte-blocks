@@ -37,27 +37,15 @@
 	};
 </script>
 
-{#if fields.length > 0}
-	<div class="space-y-4 p-4">
-		<Field.Group>
-			{#each fields as field (field.key)}
-				<FieldRenderer
-					config={field}
-					value={getFieldValue(field.key)}
-					onchange={(value) => handleFieldChange(field.key, value)}
-				/>
-			{/each}
-		</Field.Group>
-	</div>
-{:else}
-	<div class="p-4 text-center text-sm text-muted-foreground">
-		{#if tab === 'content'}
-			No content settings available for this block.
-		{:else if tab === 'design'}
-			No design settings available for this block.
-		{:else}
-			No advanced settings available for this block.
-		{/if}
-	</div>
-{/if}
+<div class="space-y-4 p-4">
+	<Field.Group>
+		{#each fields as field (field.key)}
+			<FieldRenderer
+				config={field}
+				value={getFieldValue(field.key)}
+				onchange={(value) => handleFieldChange(field.key, value)}
+			/>
+		{/each}
+	</Field.Group>
+</div>
 

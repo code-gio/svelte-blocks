@@ -35,6 +35,26 @@ export interface BlockFieldConfig {
 }
 
 /**
+ * Common advanced fields that apply to all blocks
+ */
+const COMMON_ADVANCED_FIELDS: FieldConfig[] = [
+	{
+		key: 'settings.advanced.html_id',
+		label: 'HTML ID',
+		type: 'text',
+		placeholder: 'my-element-id',
+		description: 'Unique ID attribute for this element'
+	},
+	{
+		key: 'settings.advanced.css_classes',
+		label: 'CSS Classes',
+		type: 'text',
+		placeholder: 'class-1 class-2',
+		description: 'Custom CSS classes (space-separated)'
+	}
+];
+
+/**
  * Get field configurations for a specific block type
  */
 export const getBlockFieldConfig = (blockType: string): BlockFieldConfig => {
@@ -296,7 +316,14 @@ export const getBlockFieldConfig = (blockType: string): BlockFieldConfig => {
 		}
 	};
 
-	return configs[blockType] || { content: [], design: [], advanced: [] };
+	const blockConfig = configs[blockType] || { content: [], design: [] };
+
+	// Always include common advanced fields
+	return {
+		content: blockConfig.content || [],
+		design: blockConfig.design || [],
+		advanced: [...COMMON_ADVANCED_FIELDS, ...(blockConfig.advanced || [])]
+	};
 };
 
 /**

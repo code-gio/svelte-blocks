@@ -270,6 +270,22 @@ Extracts link href.
 
 Extracts link target (_self, _blank, etc.).
 
+### getItemsPerRow(element, fallback?)
+
+Extracts items per row for grid blocks.
+
+### getPreset(element, fallback?)
+
+Extracts column preset for columns blocks.
+
+### getHtmlId(element)
+
+Gets custom HTML ID from advanced settings.
+
+### getCssClasses(element)
+
+Gets custom CSS classes from advanced settings (returns space-separated string).
+
 ## Complete Example: Leaf Block
 
 **Before (without utilities):**
@@ -328,13 +344,15 @@ Extracts link target (_self, _blank, etc.).
 **After (with utilities):**
 ```svelte
 <script lang="ts">
-  import type { BuilderElement } from "$lib/types/editor";
+  import type { BuilderElement } from "$lib/types/block";
   import {
     createClickHandler,
     isElementSelected,
     extractAllStyles,
     getLeafBlockClasses,
-    getTextContent
+    getTextContent,
+    getHtmlId,
+    getCssClasses
   } from './block-utils';
 
   let { element }: { element: BuilderElement } = $props();
@@ -343,12 +361,18 @@ Extracts link target (_self, _blank, etc.).
   const isSelected = $derived(isElementSelected(element.id));
   const text = $derived(getTextContent(element, "Text"));
   const styles = $derived(extractAllStyles(element.properties.design));
+  const htmlId = $derived(getHtmlId(element));
+  const customClasses = $derived(getCssClasses(element));
+  const combinedClasses = $derived(
+    [getLeafBlockClasses(isSelected), customClasses].filter(Boolean).join(' ')
+  );
 </script>
 
 <p
   data-element-id={element.id}
   data-element-type={element.type}
-  class={getLeafBlockClasses(isSelected)}
+  id={htmlId}
+  class={combinedClasses}
   style={styles}
   onclick={handleClick}
   role="button"

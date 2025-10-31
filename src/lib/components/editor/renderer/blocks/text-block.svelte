@@ -5,7 +5,9 @@
     isElementSelected,
     extractAllStyles,
     getLeafBlockClasses,
-    getTextContent
+    getTextContent,
+    getHtmlId,
+    getCssClasses
   } from './block-utils';
 
   let { element }: { element: BuilderElement } = $props();
@@ -14,12 +16,18 @@
   const isSelected = $derived(isElementSelected(element.id));
   const text = $derived(getTextContent(element, "Text"));
   const styles = $derived(extractAllStyles(element.properties.design));
+  const htmlId = $derived(getHtmlId(element));
+  const customClasses = $derived(getCssClasses(element));
+  const combinedClasses = $derived(
+    [getLeafBlockClasses(isSelected), customClasses].filter(Boolean).join(' ')
+  );
 </script>
 
 <p
   data-element-id={element.id}
   data-element-type={element.type}
-  class={getLeafBlockClasses(isSelected)}
+  id={htmlId}
+  class={combinedClasses}
   style={styles}
   onclick={handleClick}
   role="button"

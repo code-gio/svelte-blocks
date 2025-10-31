@@ -612,3 +612,22 @@ export const getItemsPerRow = (element: BuilderElement, fallback = 4): number =>
 export const getPreset = (element: BuilderElement, fallback = '50-50'): string => {
 	return element.properties.content?.preset || fallback;
 };
+
+// ============================================================================
+// ADVANCED SETTINGS UTILITIES
+// ============================================================================
+
+/**
+ * Get HTML ID from advanced settings
+ */
+export const getHtmlId = (element: BuilderElement): string | undefined => {
+	return element.properties.settings?.advanced?.html_id;
+};
+
+/**
+ * Get CSS classes from advanced settings
+ */
+export const getCssClasses = (element: BuilderElement): string => {
+	const classes = element.properties.settings?.advanced?.css_classes;
+	return Array.isArray(classes) ? classes.join(' ') : '';
+};

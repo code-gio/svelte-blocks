@@ -3,6 +3,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
 	import { getBlockById } from '$lib/components/editor/renderer/block-registry.js';
+	import { getBlockFieldConfig } from './field-configs';
 	import EditBlockTabs from './edit-block-tabs.svelte';
 
 	const selectedElement = $derived(
@@ -12,8 +13,17 @@
 	);
 
 	const blockInfo = $derived(selectedElement ? getBlockById(selectedElement.type) : null);
-
 	const elementLabel = $derived(blockInfo?.name || selectedElement?.type || 'Block');
+
+	// Check which tabs have fields
+	const fieldConfig = $derived(selectedElement ? getBlockFieldConfig(selectedElement.type) : null);
+	const hasContentFields = $derived((fieldConfig?.content?.length ?? 0) > 0);
+	const hasDesignFields = $derived((fieldConfig?.design?.length ?? 0) > 0);
+
+	// Determine default tab (first available tab)
+	const defaultTab = $derived(
+		hasContentFields ? 'content' : hasDesignFields ? 'design' : 'advanced'
+	);
 </script>
 
 <Sidebar.Group>
@@ -26,18 +36,26 @@
 	</Sidebar.GroupLabel>
 	<Sidebar.GroupContent>
 		{#if selectedElement}
-			<Tabs.Root value="content" class="w-full">
+			<Tabs.Root value={defaultTab} class="w-full">
 				<Tabs.List class="w-full">
-					<Tabs.Trigger value="content">Content</Tabs.Trigger>
-					<Tabs.Trigger value="design">Design</Tabs.Trigger>
+					{#if hasContentFields}
+						<Tabs.Trigger value="content">Content</Tabs.Trigger>
+					{/if}
+					{#if hasDesignFields}
+						<Tabs.Trigger value="design">Design</Tabs.Trigger>
+					{/if}
 					<Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
 				</Tabs.List>
-				<Tabs.Content value="content">
-					<EditBlockTabs element={selectedElement} tab="content" />
-				</Tabs.Content>
-				<Tabs.Content value="design">
-					<EditBlockTabs element={selectedElement} tab="design" />
-				</Tabs.Content>
+				{#if hasContentFields}
+					<Tabs.Content value="content">
+						<EditBlockTabs element={selectedElement} tab="content" />
+					</Tabs.Content>
+				{/if}
+				{#if hasDesignFields}
+					<Tabs.Content value="design">
+						<EditBlockTabs element={selectedElement} tab="design" />
+					</Tabs.Content>
+				{/if}
 				<Tabs.Content value="advanced">
 					<EditBlockTabs element={selectedElement} tab="advanced" />
 				</Tabs.Content>
