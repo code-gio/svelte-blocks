@@ -3,51 +3,16 @@ import type {
 	EditorViewMode,
 	PageStructure,
 	BuilderElement,
-	DragState,
-	ElementProperties
+	DragState
 } from '$lib/types/editor';
+import {
+	canBlockHaveChildren,
+	isLeafBlock,
+	getDefaultProperties
+} from '$lib/components/editor/renderer/block-registry';
 
 class EditorManager {
 	private static instance: EditorManager;
-
-	// Block hierarchy rules - defines which blocks can contain children
-	private readonly CONTAINER_BLOCKS = new Set([
-		'section',
-		'columns',
-		'grid',
-		'div',
-		'tabs',
-		'gallery',
-		'image-box',
-		'image-accordion',
-		'basic-list',
-		'icon-list',
-		'checkmark-list',
-		'logo-list',
-		'table-of-contents',
-		'image-hover-card',
-		'icon-box',
-		'pricing-table',
-		'stats-grid',
-		'faq'
-	]);
-
-	// Leaf blocks - cannot contain children
-	private readonly LEAF_BLOCKS = new Set([
-		'heading',
-		'text',
-		'rich-text',
-		'text-link',
-		'button',
-		'image',
-		'video',
-		'icon',
-		'dual-heading',
-		'animated-heading',
-		'blockquote',
-		'badge',
-		'fancy-divider'
-	]);
 
 	// Sidebar state
 	rightSidebarOpen = $state(true);
@@ -118,45 +83,6 @@ class EditorManager {
 		this.viewMode = mode;
 	};
 
-	// Block hierarchy methods
-	canBlockHaveChildren = (blockType: string): boolean => {
-		return this.CONTAINER_BLOCKS.has(blockType);
-	};
-
-	isLeafBlock = (blockType: string): boolean => {
-		return this.LEAF_BLOCKS.has(blockType);
-	};
-
-	getBlockHierarchyInfo = (blockType: string) => {
-		return {
-			type: blockType,
-			canHaveChildren: this.canBlockHaveChildren(blockType),
-			isLeafBlock: this.isLeafBlock(blockType),
-			isContainer: this.CONTAINER_BLOCKS.has(blockType)
-		};
-	};
-
-	isInsideSection = (parentId: string | null): boolean => {
-		if (parentId === null) return false;
-
-		const parent = this.findElementById(parentId);
-		if (!parent) return false;
-
-		// Check if parent is a section
-		if (parent.type === 'section') return true;
-
-		// Check if any ancestor is a section
-		let currentParent = parent;
-		while (currentParent.parentId !== null) {
-			const ancestor = this.findElementById(currentParent.parentId);
-			if (!ancestor) break;
-			if (ancestor.type === 'section') return true;
-			currentParent = ancestor;
-		}
-
-		return false;
-	};
-
 	// Drag and drop methods
 	startDrag = (blockType: string, blockName: string) => {
 		this.dragState.blockType = blockType;
@@ -179,7 +105,7 @@ class EditorManager {
 		index?: number
 	): BuilderElement => {
 		// Check if this is a leaf block being dropped at root level (outside any section)
-		const needsSectionWrapper = this.isLeafBlock(type) && parentId === null;
+		const needsSectionWrapper = isLeafBlock(type) && parentId === null;
 
 		// If leaf block needs section wrapper, create section first
 		if (needsSectionWrapper) {
@@ -188,7 +114,7 @@ class EditorManager {
 				id: this.generateElementId('section'),
 				type: 'section',
 				parentId: null,
-				properties: this.getDefaultProperties('section'),
+				properties: getDefaultProperties('section'),
 				children: []
 			};
 
@@ -197,7 +123,7 @@ class EditorManager {
 				id: this.generateElementId(type),
 				type,
 				parentId: section.id,
-				properties: this.getDefaultProperties(type),
+				properties: getDefaultProperties(type),
 				children: []
 			};
 
@@ -219,7 +145,7 @@ class EditorManager {
 			id: this.generateElementId(type),
 			type,
 			parentId,
-			properties: this.getDefaultProperties(type),
+			properties: getDefaultProperties(type),
 			children: []
 		};
 
@@ -235,7 +161,7 @@ class EditorManager {
 			const parent = this.findElementById(parentId);
 			if (parent) {
 				// Validate that parent can have children
-				if (!this.canBlockHaveChildren(parent.type)) {
+				if (!canBlockHaveChildren(parent.type)) {
 					console.warn(`Block type "${parent.type}" cannot have children. Element not added.`);
 					return element;
 				}
@@ -268,91 +194,6 @@ class EditorManager {
 		if (id !== null) {
 			this.leftSidebarMode = 'edit';
 		}
-	};
-
-	getDefaultProperties = (type: string): ElementProperties => {
-		// Basic defaults for common block types
-		const defaults: Record<string, ElementProperties> = {
-			section: {
-				design: {
-					spacing: {
-						padding: {
-							breakpoint_base: {
-								all: { value: 40, unit: 'px' }
-							}
-						}
-					},
-					layout: {
-						display: { breakpoint_base: 'block' }
-					}
-				}
-			},
-			heading: {
-				content: {
-					text: 'Heading',
-					tag: 'h2'
-				},
-				design: {
-					typography: {
-						font_size: {
-							breakpoint_base: { value: 32, unit: 'px' }
-						},
-						font_weight: {
-							breakpoint_base: 700
-						}
-					}
-				}
-			},
-			text: {
-				content: {
-					text: 'This is a text block. Click to edit.'
-				},
-				design: {
-					typography: {
-						font_size: {
-							breakpoint_base: { value: 16, unit: 'px' }
-						}
-					}
-				}
-			},
-			button: {
-				content: {
-					text: 'Click me'
-				},
-				design: {
-					spacing: {
-						padding: {
-							breakpoint_base: {
-								top: { value: 12, unit: 'px' },
-								bottom: { value: 12, unit: 'px' },
-								left: { value: 24, unit: 'px' },
-								right: { value: 24, unit: 'px' }
-							}
-						}
-					},
-					background: {
-						type: 'color',
-						color: {
-							breakpoint_base: '#007bff'
-						}
-					},
-					typography: {
-						color: {
-							breakpoint_base: '#ffffff'
-						}
-					},
-					border: {
-						border_radius: {
-							breakpoint_base: {
-								all: { value: 4, unit: 'px' }
-							}
-						}
-					}
-				}
-			}
-		};
-
-		return defaults[type] || { design: {}, content: {}, settings: {} };
 	};
 }
 

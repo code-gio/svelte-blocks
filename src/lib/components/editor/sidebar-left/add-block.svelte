@@ -3,7 +3,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import SearchForm from '$lib/components/editor/sidebar-left/search-form.svelte';
-	import { BLOCK_CATEGORIES } from '$lib/components/editor/renderer/blocks/index.js';
+	import { BLOCK_CATEGORIES } from '$lib/components/editor/renderer/block-registry.js';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
 
 	const handleDragStart = (blockId: string, blockName: string) => (e: DragEvent) => {

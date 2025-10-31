@@ -2,7 +2,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
-	import { getBlockById } from '$lib/components/editor/renderer/blocks/index.js';
+	import { getBlockById } from '$lib/components/editor/renderer/block-registry.js';
 
 	const selectedElement = $derived(
 		editorManager.selectedElementId

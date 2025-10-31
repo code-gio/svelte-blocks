@@ -52,9 +52,14 @@
 <button
   data-element-id={element.id}
   data-element-type={element.type}
-  class="relative"
+  class="relative transition-all duration-150"
   class:ring-2={isSelected}
   class:ring-blue-500={isSelected}
+  class:hover:outline={!isSelected}
+  class:hover:outline-2={!isSelected}
+  class:hover:outline-dashed={!isSelected}
+  class:hover:outline-gray-400={!isSelected}
+  class:hover:outline-offset-2={!isSelected}
   style={getStyles()}
   onclick={handleClick}
   type="button"

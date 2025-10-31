@@ -49,9 +49,11 @@
 <section
   data-element-id={element.id}
   data-element-type={element.type}
-  class="relative min-h-[100px]"
+  class="relative min-h-[100px] transition-all duration-150 border-2 border-transparent"
   class:ring-2={isSelected}
   class:ring-blue-500={isSelected}
+  class:!border-dashed={!isSelected}
+  class:hover:!border-blue-400={!isSelected}
   style={getStyles()}
   onclick={handleClick}
   onkeydown={handleKeyDown}

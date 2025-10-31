@@ -1,5 +1,6 @@
 <script lang="ts">
   import { editorManager } from "$lib/components/editor/editor-manager.svelte.js";
+  import { canBlockHaveChildren } from "$lib/components/editor/renderer/block-registry";
 
   let {
     parentId = null,
@@ -39,7 +40,7 @@
       // Check if we're trying to drop into a leaf block (not allowed)
       if (parentId !== null) {
         const parent = editorManager.findElementById(parentId);
-        if (parent && !editorManager.canBlockHaveChildren(parent.type)) {
+        if (parent && !canBlockHaveChildren(parent.type)) {
           console.warn(`Cannot add children to block type "${parent.type}"`);
           editorManager.endDrag();
           return;

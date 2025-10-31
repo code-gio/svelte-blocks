@@ -4,7 +4,8 @@
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import { editorManager } from '$lib/components/editor/editor-manager.svelte.js';
 	import type { BuilderElement } from '$lib/types/editor';
-	import { getBlockById } from '$lib/components/editor/renderer/blocks/index.js';
+	import { getBlockById } from '$lib/components/editor/renderer/block-registry.js';
+	import Self from './page-structure-tree.svelte';
 
 	let { element }: { element: BuilderElement } = $props();
 
@@ -18,40 +19,35 @@
 </script>
 
 {#if hasChildren}
-	<Collapsible.Root open={true} class="group/collapsible">
-		{#snippet child({ props })}
-			<Sidebar.MenuItem {...props}>
-				<Collapsible.Trigger>
-					{#snippet child({ props })}
-						<Sidebar.MenuButton
-							{...props}
-							tooltipContent={element.type}
-							isActive={isSelected}
-							onclick={handleSelect}
-						>
-							{#if blockInfo?.icon}
-								<blockInfo.icon class="size-4" />
-							{/if}
-							<span class="flex-1 truncate text-left">
-								{blockInfo?.name || element.type}
-							</span>
-							<ChevronRightIcon
-								class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-							/>
-						</Sidebar.MenuButton>
-					{/snippet}
-				</Collapsible.Trigger>
-				<Collapsible.Content>
-					<Sidebar.MenuSub>
-						{#each element.children as child (child.id)}
-							<Sidebar.MenuSubItem>
-								<svelte:self element={child} />
-							</Sidebar.MenuSubItem>
-						{/each}
-					</Sidebar.MenuSub>
-				</Collapsible.Content>
-			</Sidebar.MenuItem>
-		{/snippet}
+	<Collapsible.Root class="group/collapsible">
+		<Sidebar.MenuItem>
+			<Collapsible.Trigger class="w-full">
+				<Sidebar.MenuButton
+					tooltipContent={element.type}
+					isActive={isSelected}
+					onclick={handleSelect}
+				>
+					{#if blockInfo?.icon}
+						<blockInfo.icon class="size-4" />
+					{/if}
+					<span class="flex-1 truncate text-left">
+						{blockInfo?.name || element.type}
+					</span>
+					<ChevronRightIcon
+						class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+					/>
+				</Sidebar.MenuButton>
+			</Collapsible.Trigger>
+			<Collapsible.Content>
+				<Sidebar.MenuSub>
+					{#each element.children as child (child.id)}
+						<Sidebar.MenuSubItem>
+							<Self element={child} />
+						</Sidebar.MenuSubItem>
+					{/each}
+				</Sidebar.MenuSub>
+			</Collapsible.Content>
+		</Sidebar.MenuItem>
 	</Collapsible.Root>
 {:else}
 	<Sidebar.MenuItem>

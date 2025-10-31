@@ -37,9 +37,14 @@
 <p
   data-element-id={element.id}
   data-element-type={element.type}
-  class="relative cursor-pointer"
+  class="relative cursor-pointer transition-all duration-150 rounded px-1"
   class:ring-2={isSelected}
   class:ring-blue-500={isSelected}
+  class:hover:outline={!isSelected}
+  class:hover:outline-2={!isSelected}
+  class:hover:outline-dashed={!isSelected}
+  class:hover:outline-gray-400={!isSelected}
+  class:hover:outline-offset-2={!isSelected}
   style={getStyles()}
   onclick={handleClick}
   role="button"
